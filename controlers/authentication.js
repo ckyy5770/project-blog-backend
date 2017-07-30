@@ -1,8 +1,25 @@
 const User = require('../models/user');
+const jwt = require('jwt-simple');
+const config = require('../config');
 
-exports.signUp = function (req, res, next) {
+function getJwt(user){
+    const timeStamp = new Date().getTime();
+    return jwt.encode({sub: user.id, iat: timeStamp}, config.secret);
+}
+
+exports.signIn = function(req, res, next){
+    res.send({token: getJwt(req.user)});
+};
+
+exports.signUp = function(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
+
+    if(!email || !password){
+        return res.status(422).send({
+            error: 'You must provide both email and password.'
+        })
+    }
 
     User.findOne({email: email}, function(err, existingUser){
         // handle db operation err
@@ -23,7 +40,7 @@ exports.signUp = function (req, res, next) {
             user.save(function(err){
                 if(err){return next(err);}
 
-                res.json({success: true});
+                res.json({token: getJwt(user)});
             });
         }
     });
