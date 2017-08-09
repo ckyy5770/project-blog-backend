@@ -1,8 +1,14 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 
-exports.fetchPosts = function(req, res){
-    res.send('here are posts you need.');
+exports.fetchPosts = function(req, res, next){
+    Post.find({}, function(err, posts){
+        if(err){
+            return next(err);
+        } else {
+            return res.status(200).send(posts);
+        }
+    });
 };
 
 exports.createPost = function (req, res, next) {
@@ -10,7 +16,6 @@ exports.createPost = function (req, res, next) {
     const content = req.body.content;
     const author = req.body.author;
     const tags = req.body.tags;
-
 
     if(!title || !content || !author){
         return res.status(422).send({
