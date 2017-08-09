@@ -4,10 +4,13 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
     title: String,
     content: String,
-    tag: [String],
+    tags: [String],
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user"
+        },
+        username: String
     },
     comments: [
         {

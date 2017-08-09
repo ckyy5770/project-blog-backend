@@ -1,11 +1,52 @@
 const Post = require("../models/post");
+const User = require("../models/user");
 
 exports.fetchPosts = function(req, res){
     res.send('here are posts you need.');
 };
 
-exports.createPost = function (req, res) {
-    res.send('200 OK');
+exports.createPost = function (req, res, next) {
+    const title = req.body.title;
+    const content = req.body.content;
+    const author = req.body.author;
+    const tags = req.body.tags;
+
+
+    if(!title || !content || !author){
+        return res.status(422).send({
+            error: 'You must provide title, content and author.'
+        })
+    }
+
+    User.findOne({email: author}, function (err, existingUser) {
+        if(err) {
+            return next(err);
+        }else{
+            if(existingUser === null){
+                return res.status(422).send({
+                    error: "Author not found."
+                })
+            }
+            const post = new Post({
+                title: title,
+                content: content,
+                author: {
+                    id: existingUser._id,
+                    username: existingUser.username
+                },
+                tags: tags
+            });
+
+            post.save(function (err, newPost) {
+                if(err){
+                    return next(err);
+                }else{
+                    return res.status(200).send(newPost);
+                }
+            })
+        }
+    });
+
 };
 
 exports.fetchById = function (req, res) {
