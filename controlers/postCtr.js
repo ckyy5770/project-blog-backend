@@ -72,14 +72,14 @@ exports.updateById = function (req, res, next) {
     const content = req.body.content;
     const tags = req.body.tags;
 
-    const post = {
+    const updateFields = {
         title: title,
         content: content,
         tags: tags
     };
 
 
-    Post.findByIdAndUpdate(id, post, {new: true}, function (err, updatedPost) {
+    Post.findByIdAndUpdate(id, updateFields, {new: true}, function (err, updatedPost) {
         if(err){
             return next(err);
         }else{
@@ -91,12 +91,12 @@ exports.updateById = function (req, res, next) {
 
 exports.destroyById = function (req, res) {
     const id = req.params.id;
-    Post.findByIdAndRemove(id, function (err, updatedPost) {
+    Post.findByIdAndRemove(id, function (err, post) {
         if(err){
             return next(err);
         }else{
-            if(updatedPost === null) return res.status(422).send("post not found");
-            return res.status(200).send("delete succeed.");
+            if(post === null) return res.status(422).send("post not found");
+            return res.status(200).send(post);
         }
     });
 };

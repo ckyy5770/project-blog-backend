@@ -7,6 +7,7 @@ require('../services/passport');
 const requireAuth = passport.authenticate('jwt', {session: false});
 
 // posts routes;
+router.get('/:postId/comments', commentControler.fetchByPost);
 router.post('/:postId/comments', commentControler.createComment);
 router.get('/:postId/comments/:commentId', commentControler.fetchById);
 router.put('/:postId/comments/:commentId', commentControler.updateById);

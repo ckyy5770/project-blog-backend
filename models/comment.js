@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
     content: String,
-    post: {
+    postId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "post"
     },
