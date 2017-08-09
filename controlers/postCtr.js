@@ -54,17 +54,49 @@ exports.createPost = function (req, res, next) {
 
 };
 
-exports.fetchById = function (req, res) {
+exports.fetchById = function (req, res, next) {
     const id = req.params.id;
-    res.send('fetch post by id: ' + id);
+    Post.findById(id, function (err, post) {
+        if(err){
+            return next(err);
+        }else{
+            if(post === null) return res.status(422).send("post not found");
+            return res.status(200).send(post);
+        }
+    });
 };
 
-exports.updateById = function (req, res) {
+exports.updateById = function (req, res, next) {
     const id = req.params.id;
-    res.send('update post by id: ' + id);
+    const title = req.body.title;
+    const content = req.body.content;
+    const tags = req.body.tags;
+
+    const post = {
+        title: title,
+        content: content,
+        tags: tags
+    };
+
+
+    Post.findByIdAndUpdate(id, post, {new: true}, function (err, updatedPost) {
+        if(err){
+            return next(err);
+        }else{
+            if(updatedPost === null) return res.status(422).send("post not found");
+            return res.status(200).send(updatedPost);
+        }
+    });
 };
 
 exports.destroyById = function (req, res) {
     const id = req.params.id;
-    res.send('delete post by id: ' + id);
+    Post.findByIdAndRemove(id, function (err, updatedPost) {
+        if(err){
+            return next(err);
+        }else{
+            if(updatedPost === null) return res.status(422).send("post not found");
+            return res.status(200).send("delete succeed.");
+        }
+    });
 };
