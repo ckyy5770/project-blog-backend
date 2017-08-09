@@ -2,9 +2,14 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const router = require('./router');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+//requiring routes
+const commentRoutes = require("./routes/comments");
+const postRoutes = require("./routes/posts");
+const indexRoutes = require("./routes/index");
+
 
 const app = express();
 
@@ -15,7 +20,11 @@ mongoose.connect('mongodb://localhost/test');
 app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.json({type:'*/*'}));
-router(app);
+
+// routers
+app.use("/", indexRoutes);
+app.use("/posts", postRoutes);
+app.use("/posts", commentRoutes);
 
 // Server Setup
 const port = process.env.PORT || 6001;
