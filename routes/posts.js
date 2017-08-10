@@ -4,13 +4,13 @@ const postControler = require('../controlers/postCtr');
 const passport = require('passport');
 require('../services/passport');
 
-const requireAuth = passport.authenticate('jwt', {session: false});
+const jwtAuth = passport.authenticate('jwt', {session: false});
 
 // posts routes
 router.get('/', postControler.fetchPosts);
-router.post('/', postControler.createPost);
 router.get('/:id', postControler.fetchById);
-router.put('/:id', postControler.updateById);
-router.delete('/:id', postControler.destroyById);
+router.post('/', jwtAuth, postControler.createPost);
+router.put('/:id', jwtAuth, postControler.checkOwnership, postControler.updateById);
+router.delete('/:id', jwtAuth, postControler.checkOwnership, postControler.destroyById);
 
 module.exports = router;
