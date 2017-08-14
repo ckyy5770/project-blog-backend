@@ -8,16 +8,23 @@ function getJwt(user){
 }
 
 exports.logIn = function(req, res, next){
-    res.send({token: getJwt(req.user)});
+    res.send({
+        user: {
+            token: getJwt(req.user),
+            nickName: req.user.nickName,
+            id: req.user._id
+        }
+    });
 };
 
 exports.signUp = function(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
+    const nickName = req.body.nickName;
 
-    if(!email || !password){
+    if(!email || !password || !nickName){
         return res.status(422).send({
-            error: 'You must provide both email and password.'
+            error: 'You must provide email, password and nickName.'
         })
     }
 
@@ -34,13 +41,20 @@ exports.signUp = function(req, res, next) {
         }else{
             const user = new User({
                 email: email,
-                password: password
+                password: password,
+                nickName: nickName
             });
 
             user.save(function(err){
                 if(err){return next(err);}
 
-                res.json({token: getJwt(user)});
+                res.send({
+                    user: {
+                        token: getJwt(req.user),
+                        nickName: req.user.nickName,
+                        id: req.user._id
+                    }
+                });
             });
         }
     });

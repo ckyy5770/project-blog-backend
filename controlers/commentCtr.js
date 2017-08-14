@@ -37,13 +37,19 @@ exports.createComment = function (req, res, next) {
             postId: postId,
             author: {
                 id: req.user._id,
-                username: req.user.username
+                nickName: req.user.nickName
             }
         });
         comment.save(function (err, newComment) {
             if(err) return next(err);
 
-            res.status(200).send(newComment);
+            // increment comment number of the post
+            post.comments = post.comments + 1;
+            post.save(function (err, newPost) {
+                if(err) return next(err);
+
+                res.status(200).send(newComment);
+            })
         })
     });
 };
@@ -74,11 +80,21 @@ exports.updateById = function (req, res, next) {
 };
 
 exports.destroyById = function (req, res, next) {
+    const postId = req.params.postId;
     const commentId = req.params.commentId;
     Comment.findByIdAndRemove(commentId, function (err, comment) {
         if(err) return next(err);
         if(comment === null) return res.status(404).send("Comment not found.");
 
-        return res.status(200).send(comment);
+        // decrement comments number
+        Post.findById(postId, function (err, post) {
+            if(err) return next(err);
+            post.comments = post.comments - 1;
+            post.save(function (err, newPost) {
+                if(err) return next(err);
+                return res.status(200).send(comment);
+            })
+        });
+
     });
 };

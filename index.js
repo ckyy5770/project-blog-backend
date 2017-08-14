@@ -14,7 +14,7 @@ const indexRoutes = require("./routes/index");
 const app = express();
 
 // DB setup
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/test_v2');
 
 // App Setup
 app.use(morgan('combined'));

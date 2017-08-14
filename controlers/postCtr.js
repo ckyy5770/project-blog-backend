@@ -35,12 +35,13 @@ exports.createPost = function (req, res, next) {
         return res.status(422).send('You must provide both title and content.');
     }
 
+    console.log(req.user);
     const post = new Post({
         title: title,
         content: content,
         author: {
             id: req.user._id,
-            username: req.user.username
+            nickName: req.user.nickName
         },
         tags: tags
     });
@@ -64,6 +65,11 @@ exports.fetchById = function (req, res, next) {
         }else{
             if(post === null) return res.status(404).send("post not found");
 
+            // increment views
+            post.views = post.views + 1;
+            post.save(function (err, updatedPost) {
+                if(err) return next(err);
+            });
             return res.status(200).send(post);
         }
     });
