@@ -13,7 +13,8 @@ const commentSchema = new Schema({
             ref: "user"
         },
         nickName: String
-    }
+    },
+    likes: {type: Number, default: 0}
 }, {
     timestamps: true
 });
