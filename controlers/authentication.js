@@ -45,14 +45,14 @@ exports.signUp = function(req, res, next) {
                 nickName: nickName
             });
 
-            user.save(function(err){
+            user.save(function(err, newUser){
                 if(err){return next(err);}
 
                 res.send({
                     user: {
-                        token: getJwt(req.user),
-                        nickName: req.user.nickName,
-                        id: req.user._id
+                        token: getJwt(newUser),
+                        nickName: newUser.nickName,
+                        id: newUser._id
                     }
                 });
             });
