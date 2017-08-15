@@ -13,8 +13,9 @@ const indexRoutes = require("./routes/index");
 
 const app = express();
 
+const db_url = process.env.DATABASE_URL || 'mongodb://localhost/test_v2';
 // DB setup
-mongoose.connect('mongodb://localhost/test_v2');
+mongoose.connect(db_url);
 
 // App Setup
 app.use(morgan('combined'));
